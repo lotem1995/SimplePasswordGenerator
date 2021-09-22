@@ -57,17 +57,39 @@ public:
                     while (m_used[j].second==-1);
                     choosenCase=m_used[j].first;
                 }
-                update(choosenCase,i);
+                update(simple,choosenCase,i);
             }
         }
     }
+    void generateSpecific(int numbers,int lower_case, int upper_case, int special){
+        m_used={{'n',numbers},{'l',lower_case},{'u',upper_case},{'s',special}};
+        std::srand(std::time(NULL));
+        for(int i=0;i<(int)length;i++){
+            auto nonUsedType=[](QVector<QPair<char,int>>& m){
+                for(QPair<char,int> a : m){
+                    if(a.second!=0)
+                        return a.first;
+                }
+                return (char)0;
+            };
+            char choosenCase=nonUsedType(m_used);
+            if(i<=(int)length/2 || !choosenCase){
+                int j=std::rand()%m_used.size();
+                do
+                    j=std::rand()%m_used.size();
+                while(m_used[j].second==0);
+            }
+            update(specific,choosenCase,i);
+        }
+    }
 private:
+    enum cases {simple,specific};
     QVector<char> m_numbers;
     QVector<char> m_lower_case;
     QVector<char> m_upper_case;
     QVector<char> m_special_chars;
     QVector<QPair<char,int>> m_used;
-    void update(char& type,int& index){
+    void update(cases ca,char& type,int& index){
         int j;
         char tmp;
         switch (type) {
@@ -76,28 +98,40 @@ private:
             tmp=m_numbers[j];
             password[index]=QChar(tmp);
             m_numbers.erase(m_numbers.begin()+j);
-            ++m_used[0].second;
+            if(ca==simple)
+                ++m_used[0].second;
+            else if(ca==specific)
+                --m_used[0].second;
             break;
         case 'l':
             j=std::rand()%m_lower_case.size();
             tmp=m_lower_case[j];
             password[index]=QChar(tmp);
             m_lower_case.erase(m_lower_case.begin()+j);
-            ++m_used[1].second;
+            if(ca==simple)
+                ++m_used[1].second;
+            else if(ca==specific)
+                --m_used[1].second;
             break;
         case 'u':
             j=std::rand()%m_upper_case.size();
             tmp=m_upper_case[j];
             password[index]=QChar(tmp);
             m_upper_case.erase(m_upper_case.begin()+j);
-            ++m_used[2].second;
+            if(ca==simple)
+                ++m_used[2].second;
+            else if(ca==specific)
+                --m_used[2].second;
             break;
         case 's':
             j=std::rand()%m_special_chars.size();
             tmp=m_special_chars[j];
             password[index]=QChar(tmp);
             m_special_chars.erase(m_special_chars.begin()+j);
-            ++m_used[3].second;
+            if(ca==simple)
+                ++m_used[3].second;
+            else if(ca==specific)
+                --m_used[3].second;
             break;
         }
     }
@@ -128,23 +162,31 @@ private slots:
 
     void on_commandLinkButton_clicked();
 
-//    void on_passwordLength_sliderMoved(int position);
-
-//    void on_commandLinkButton_pressed();
-
     void on_passwordLength_valueChanged(int value);
 
     void on_actionAbout_triggered();
 
     void on_actionReset_triggered();
 
- //   void on_passwordLength_sliderPressed();
-
     void on_actionExit_triggered();
+
+    void on_lengthSpin2_valueChanged(int arg1);
+
+    void on_lengthSlider2_valueChanged(int value);
+
+    void on_charNumbers2_valueChanged(int arg1);
+
+    void on_charUpper2_valueChanged(int arg1);
+
+    void on_charLower2_valueChanged(int arg1);
+
+    void on_charSpecial2_valueChanged(int arg1);
+
+    void on_executeSpecific_clicked();
 
 private:
     Ui::MainWindow *ui;
-    bool numbers=0, lower_case_letters=0,upper_case_letters=0,special=0;
+    int numbers=0, lower_case_letters=0,upper_case_letters=0,special=0;
     int length=8;
     Password generated;
 };

@@ -60,20 +60,6 @@ void MainWindow::on_commandLinkButton_clicked()
     ui->Output->setPlainText(generated.password);
 }
 
-/*
-void MainWindow::on_passwordLength_sliderMoved(int position)
-{
-    length=position;
-    ui->displayLength->display(length);
-}
-
-
-void MainWindow::on_commandLinkButton_pressed()
-{
-    MainWindow::on_commandLinkButton_clicked();
-}
-*/
-
 void MainWindow::on_passwordLength_valueChanged(int value)
 {
     length=value;
@@ -102,15 +88,66 @@ void MainWindow::on_actionReset_triggered()
     ui->charSpecial->setChecked(special);
 }
 
-/*
-void MainWindow::on_passwordLength_sliderPressed()
-{
-    ui->displayLength->display(length);
-}
-*/
 
 void MainWindow::on_actionExit_triggered()
 {
     QCoreApplication::exit();
+}
+
+void MainWindow::on_lengthSpin2_valueChanged(int arg1)
+{
+    length=arg1;
+    ui->lengthSlider2->setValue(length);
+    //ui->outputSpecific->setPlainText(QStringLiteral("%1").arg(length));
+}
+
+
+void MainWindow::on_lengthSlider2_valueChanged(int value)
+{
+    length=value;
+    ui->lengthSpin2->setValue(length);
+    //ui->outputSpecific->setPlainText(QStringLiteral("%1").arg(length));
+}
+
+
+void MainWindow::on_charNumbers2_valueChanged(int arg1)
+{
+    numbers=arg1;
+}
+
+
+void MainWindow::on_charUpper2_valueChanged(int arg1)
+{
+    upper_case_letters=arg1;
+}
+
+
+void MainWindow::on_charLower2_valueChanged(int arg1)
+{
+    lower_case_letters=arg1;
+}
+
+
+
+void MainWindow::on_charSpecial2_valueChanged(int arg1)
+{
+    special=arg1;
+}
+
+
+void MainWindow::on_executeSpecific_clicked()
+{
+    int validation=numbers+upper_case_letters+lower_case_letters+special;
+    if (validation==0||length==0)
+        ui->outputSpecific->setPlainText("nice try");
+    else if(validation>length)
+        ui->outputSpecific->setPlainText(QStringLiteral("please reduce the number of characters requested by %1").arg(validation-length));
+    else if(length>validation)
+        ui->outputSpecific->setPlainText(QStringLiteral("please increase the number of characters requested by %1").arg(length-validation));
+    else{
+        generated.Init(length);
+        generated.generateSpecific(numbers,lower_case_letters,upper_case_letters,special);
+        ui->outputSpecific->setPlainText(generated.password);
+    }
 }
 
